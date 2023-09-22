@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 7369073091779675289}
   - component: {fileID: 7369073091779675288}
   - component: {fileID: 7369073091779675290}
-  - component: {fileID: 8323124065018777680}
-  - component: {fileID: -324402580564343349}
   m_Layer: 2
   m_Name: Wheel
   m_TagString: Untagged
@@ -100,87 +98,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carRigidbody: {fileID: 0}
   suspensionRestDistance: 0.5
-  extraRayLength: 1
+  springTravel: 0
   springStrength: 3
   springDamper: 0.5
---- !u!114 &8323124065018777680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369073091779675293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 177f9d72a4d4bf848989e23634edc089, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carRigidbody: {fileID: 0}
-  tireGripFactor: 0.29
-  tireMass: 12
---- !u!114 &-324402580564343349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7369073091779675293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17acd6ac85de34944a6f0cef37286246, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  accelerateAction:
-    m_Name: Accelerate
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: a14ef65b-0ae9-41be-8e79-d4c0e145e249
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-  carRigidbody: {fileID: 0}
-  carTransform: {fileID: 0}
-  carTopSpeed: 0
-  powerCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: -0.010902405
-      value: 0.49609375
-      inSlope: 1.8097621
-      outSlope: 1.8097621
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.2292633
-      value: 0.93073654
-      inSlope: 0.82584673
-      outSlope: 0.82584673
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.85709226
-      value: 0.8314965
-      inSlope: -1.4669936
-      outSlope: -1.4669936
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.99314165
-      value: 0.45383447
-      inSlope: -0.9072206
-      outSlope: -0.9072206
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.8529983
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  wheelRadius: 0

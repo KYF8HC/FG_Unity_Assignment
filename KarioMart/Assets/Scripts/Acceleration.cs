@@ -25,6 +25,7 @@ public class Acceleration : MonoBehaviour
     private void Update()
     {
         float accelInput = accelerateAction.ReadValue<float>();
+        Debug.Log(accelInput);
         bool rayDidHit = Physics.Raycast(tireTransform.position, -tireTransform.up,
             (tireTransform.position.y / 2) + .1f);
         Debug.DrawRay(tireTransform.position, ((tireTransform.position.y / 2) + .1f) * -tireTransform.up);
