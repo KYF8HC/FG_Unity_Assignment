@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class SteerController : MonoBehaviour
 {
     [SerializeField] private InputAction steerAction;
+    [SerializeField] private InputAction resetFlipAction;
     [SerializeField] private float wheelBase;
     [SerializeField] private float rearTrack;
     [SerializeField] private float turnRadius;
@@ -31,11 +32,17 @@ public class SteerController : MonoBehaviour
             }
         }
         steerAction.Enable();
+        resetFlipAction.Enable();
     }
 
     private void Update()
     {
         var steerInput = steerAction.ReadValue<float>();
+        var resetFlipInput = resetFlipAction.ReadValue<float>();
+        if (resetFlipInput > 0)
+        {
+            transform.localRotation = Quaternion.identity;
+        }
         if (steerInput < 0)
         {
             ackermannAngleLeft =
@@ -62,5 +69,6 @@ public class SteerController : MonoBehaviour
     private void OnDestroy()
     {
         steerAction.Disable();
+        resetFlipAction.Disable();
     }
 }
