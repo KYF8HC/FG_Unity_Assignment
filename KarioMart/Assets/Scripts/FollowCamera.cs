@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class FollowCamera : MonoBehaviour
@@ -6,7 +7,12 @@ public class FollowCamera : MonoBehaviour
     private Vector3 offset = new Vector3(0f, 8f, -16.5f);
     private Vector3 rotation = new Vector3(25f, 0f, 0f);
 
-    void LateUpdate()
+    private void Start()
+    {
+        target = FindObjectOfType<SteerController>().transform;
+    }
+
+    private void LateUpdate()
     {
         if (target == null)
         {

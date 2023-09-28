@@ -1,19 +1,28 @@
 using System;
 
-public class PlayerData
+public class PlayerData : IJsonSaveable
 {
     private string playerName;
-    private int lapCount = 0;
+    private float time;
 
-    public void SetPlayerName(string name)
+    public PlayerData(string name, float time)
     {
-        if (String.IsNullOrEmpty(playerName))
-        {
-            playerName = name;
-        }
+        playerName = name;
+        this.time = time;
     }
-    public void IncrementLapCount()
+
+    public void Save()
     {
-        lapCount++;
+        throw new NotImplementedException();
+    }
+
+    public void Load()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Register()
+    {
+        throw new NotImplementedException();
     }
 }

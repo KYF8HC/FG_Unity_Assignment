@@ -109,7 +109,6 @@ public class Wheel : MonoBehaviour
 
         var carDir = accelValue < 0 ? -carTransform.forward : carTransform.forward;
         var carSpeed = Vector3.Dot(carDir, carRigidbody.velocity);
-        Debug.Log(carSpeed);
         var normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / carTopSpeed);
         var availableTorque = powerCurve.Evaluate(normalizedSpeed) * Mathf.Abs(accelValue);
         return availableTorque * speedMultiplier * carDir;
