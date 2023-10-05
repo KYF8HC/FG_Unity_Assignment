@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Timer
 {
-    private float elapsedTime = 0.0f;
+    private float elapsedTime;
     
     public void IncreaseTimer()
     {

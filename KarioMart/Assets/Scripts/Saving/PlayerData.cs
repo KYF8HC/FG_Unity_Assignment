@@ -1,6 +1,6 @@
 using System;
 
-public class PlayerData : IJsonSaveable
+public class PlayerData : IJsonSavable
 {
     private string playerName;
     private float time;

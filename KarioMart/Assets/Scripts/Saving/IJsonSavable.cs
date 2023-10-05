@@ -1,4 +1,4 @@
-public interface IJsonSaveable
+public interface IJsonSavable
 {
     public void Save();
     public void Load();
