@@ -16,12 +16,6 @@ namespace KarioMart.Core
         //Singleton
         public static GameStateManager Instance { get; private set; }
 
-        //Actions
-        public event Action OnMainMenu;
-        public event Action OnGameStarted;
-        public event Action OnIsPaused;
-        public event Action OnGameOver;
-
         //Resources
         private GameObject mainMenuInitializerResource;
         private GameObject inGameInitializerResource;
@@ -35,7 +29,6 @@ namespace KarioMart.Core
         private GameState currentGameState;
 
         private string targetMapName;
-        private float timer = 0f;
 
         private void Awake()
         {

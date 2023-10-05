@@ -67,10 +67,14 @@ namespace KarioMart.UI
                 Debug.LogError("TimerInstance not found");
         }
 
+        public void ResetLapCount()
+        {
+            lapCount = 0;
+        }
         public void IncrementLapCount(int maxLapCount)
         {
             lapCount++;
-            lapCountText.text = $"{lapCount} / {maxLapCount}";
+            lapCountText.text = $"{lapCount} / {maxLapCount} Laps";
         }
     }
 }

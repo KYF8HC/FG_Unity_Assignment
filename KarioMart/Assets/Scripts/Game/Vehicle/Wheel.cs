@@ -42,14 +42,18 @@ namespace KarioMart.Vehicle
         private void Start()
         {
             inputHandler = InGameInitializer.Instance.GetInputHandler();
+            inputHandler.OnPause += InputHandler_OnPause;
             playerInputActions = inputHandler.GetPlayerInputActions();
             tireTransform = transform;
             accelerateAction.Enable();
             brakeAction.Enable();
         }
 
+
+
         private void OnDestroy()
         {
+            inputHandler.OnPause -= InputHandler_OnPause;
             accelerateAction.Disable();
             brakeAction.Disable();
         }
@@ -67,6 +71,11 @@ namespace KarioMart.Vehicle
                 return;
             ApplyForce();
             HandleBrake();
+        }
+
+        private void InputHandler_OnPause()
+        {
+            gameIsPaused = !gameIsPaused;
         }
 
         private void ApplyForce()

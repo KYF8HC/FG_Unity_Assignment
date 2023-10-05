@@ -1,5 +1,6 @@
 using KarioMart.UI;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace KarioMart.Core
 {
@@ -23,9 +24,11 @@ namespace KarioMart.Core
         private GameObject lapIncrementerGameObjectInstance;
         private GameObject mapGameObjectInstance;
         private GameObject followCameraInstance;
-
         private Timer timer;
         private InputHandler inputHandler;
+        private InGameHUD inGameHUD;
+        private PauseMenu pauseMenu;
+
         private string targetMapName;
 
         public bool gameIsPaused;
@@ -59,6 +62,7 @@ namespace KarioMart.Core
             {
                 Instance = null;
             }
+            inputHandler.OnPause -= InputHandler_OnPause;
         }
 
         private void LoadResources()
@@ -86,12 +90,16 @@ namespace KarioMart.Core
             if (inputHandler == null)
                 Debug.LogError("InputHandler not found");
             inputHandler.Initialize();
+            inputHandler.OnPause += InputHandler_OnPause;
             timer = new Timer();
             if (timer == null)
-            {
                 Debug.LogError("Timer not found");
-            }
-
+            pauseMenu = new PauseMenu();
+            if (pauseMenu == null)
+                Debug.LogError("PauseMenu not found");
+            pauseMenu.SetInputHandler(inputHandler);
+            pauseMenu.Initialize();
+            pauseMenu.GetRestartButton().onClick.AddListener(RestartGame);
             canvasInstance = Instantiate(canvasResource);
             if (!canvasInstance)
                 Debug.LogError("CanvasInstance not found");
@@ -101,7 +109,7 @@ namespace KarioMart.Core
             inGameHUDGameObjectInstance = Instantiate(inGameHUDResource, canvasInstance.transform);
             if (!inGameHUDGameObjectInstance)
                 Debug.LogError("InGameHUDInstance not found");
-            var inGameHUD = inGameHUDGameObjectInstance.GetComponent<InGameHUD>();
+            inGameHUD = inGameHUDGameObjectInstance.GetComponent<InGameHUD>();
             inGameHUD.SetTimerInstance(timer);
             lapIncrementerGameObjectInstance = Instantiate(lapIncrementerResource);
             if (!lapIncrementerGameObjectInstance)
@@ -111,6 +119,21 @@ namespace KarioMart.Core
             if (!followCameraInstance)
                 Debug.LogError("FollowCameraInstance not found");
             followCameraInstance.GetComponent<FollowCamera>().SetFollowTarget(playerOneCarGameObjectInstance.transform);
+        }
+
+        private void InputHandler_OnPause()
+        {
+            gameIsPaused = !gameIsPaused;
+        }
+
+        public void RestartGame()
+        {
+            Destroy(playerOneCarGameObjectInstance);
+            playerOneCarGameObjectInstance = Instantiate(playerOneCarResource);
+            followCameraInstance.GetComponent<FollowCamera>().SetFollowTarget(playerOneCarGameObjectInstance.transform);
+            timer.ResetTimer();
+            inGameHUD.ResetLapCount();
+            gameIsPaused = !gameIsPaused;
         }
 
         public void LoadTargetMapName(string mapName)

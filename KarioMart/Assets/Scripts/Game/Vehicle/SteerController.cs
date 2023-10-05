@@ -1,3 +1,4 @@
+using System;
 using KarioMart.Core;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace KarioMart.Vehicle
         [SerializeField] private float rearTrack;
         [SerializeField] private float turnRadius;
 
+        private Rigidbody carRigidbody;
         private float ackermannAngleLeft;
         private float ackermannAngleRight;
         private Wheel frontLeftWheel;
@@ -18,6 +20,7 @@ namespace KarioMart.Vehicle
 
         private void Start()
         {
+            carRigidbody = GetComponent<Rigidbody>();
             foreach (Transform child in transform)
             {
                 var wheel = child.GetComponent<Wheel>();
@@ -33,8 +36,20 @@ namespace KarioMart.Vehicle
                         continue;
                 }
             }
+
             inputHandler = InGameInitializer.Instance.GetInputHandler();
+            inputHandler.OnPause += InputHandler_OnPause;
             playerInputActions = inputHandler.GetPlayerInputActions();
+        }
+
+        private void OnDestroy()
+        {
+            inputHandler.OnPause -= InputHandler_OnPause;
+        }
+
+        private void InputHandler_OnPause()
+        {
+            carRigidbody.isKinematic = !carRigidbody.isKinematic;
         }
 
         private void Update()

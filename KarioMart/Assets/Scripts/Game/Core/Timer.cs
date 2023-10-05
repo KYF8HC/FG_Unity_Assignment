@@ -12,4 +12,8 @@ public class Timer
     {
         return elapsedTime;
     }
+    public void ResetTimer()
+    {
+        elapsedTime = 0f;
+    }
 }
