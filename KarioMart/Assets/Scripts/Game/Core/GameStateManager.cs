@@ -9,7 +9,6 @@ namespace KarioMart.Core
         {
             MainMenu,
             InGame,
-            IsPaused,
             GameOver
         }
 
@@ -47,44 +46,19 @@ namespace KarioMart.Core
 
         private void Start()
         {
-            currentGameState = GameState.MainMenu;
+            InstantiateMainMenu();
         }
 
-        private void Update()
+        private void OnDestroy()
         {
-            switch (currentGameState)
+            if (Instance == this)
             {
-                case GameState.MainMenu:
-                    if (!mainMenuInitializerInstance)
-                    {
-                        mainMenuInitializerInstance = Instantiate(mainMenuInitializerResource);
-                    }
-
-                    break;
-                case GameState.InGame:
-                    if (mainMenuInitializerInstance)
-                    {
-                        Destroy(mainMenuInitializerInstance);
-                    }
-
-                    if (!inGameInitializerInstance)
-                    {
-                        inGameInitializerInstance = Instantiate(inGameInitializerResource);
-                        var initializer = inGameInitializerInstance.GetComponent<InGameInitializer>();
-                        if (!initializer)
-                            Debug.LogError("InGameInitializer not found");
-                        else
-                        {
-                            initializer.LoadTargetMapName(targetMapName);
-                        }
-                    }
-
-                    break;
-                case GameState.GameOver:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                Instance = null;
             }
+
+            Destroy(mainMenuInitializerInstance);
+            Destroy(inGameInitializerInstance);
+            Destroy(gameOverInitializerInstance);
         }
 
         private void LoadResources()
@@ -100,11 +74,30 @@ namespace KarioMart.Core
                 Debug.LogError("GameOverInitializerResource not found");*/
         }
 
-        public void SetTargetMapName(string mapName)
+        private void InstantiateMainMenu()
         {
-            targetMapName = mapName;
+            mainMenuInitializerInstance = Instantiate(mainMenuInitializerResource);
+            if (!mainMenuInitializerInstance)
+                Debug.LogError("GameStateManager: MainMenuInitializerInstance not found");
         }
 
+        public void InstantiateTargetMap(string mapName)
+        {
+            mainMenuInitializerInstance.GetComponent<MainMenuInitializer>().SetMainMenuActive(false);
+            inGameInitializerInstance = Instantiate(inGameInitializerResource);
+            var initializer = InGameInitializer.Instance;
+            if (!initializer)
+                Debug.LogError("InGameInitializer not found");
+            else
+                initializer.LoadTargetMapName(mapName);
+        }
+
+        public void ReturnToMainMenu()
+        {
+            mainMenuInitializerInstance.GetComponent<MainMenuInitializer>().SetMainMenuActive(true);
+            Destroy(InGameInitializer.Instance.gameObject);
+        }
+        
         public void SetGameState(GameState state)
         {
             currentGameState = state;

@@ -1,6 +1,5 @@
 using KarioMart.UI;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace KarioMart.Core
 {
@@ -11,6 +10,7 @@ namespace KarioMart.Core
 
         //Resources
         private GameObject canvasResource;
+        private GameObject gameRootResource;
         private GameObject playerOneCarResource;
         private GameObject inGameHUDResource;
         private GameObject lapIncrementerResource;
@@ -19,6 +19,7 @@ namespace KarioMart.Core
 
         //Instances
         private GameObject canvasInstance;
+        private GameObject gameRootInstance;
         private GameObject playerOneCarGameObjectInstance;
         private GameObject inGameHUDGameObjectInstance;
         private GameObject lapIncrementerGameObjectInstance;
@@ -30,8 +31,8 @@ namespace KarioMart.Core
         private PauseMenu pauseMenu;
 
         private string targetMapName;
+        private bool gameIsPaused;
 
-        public bool gameIsPaused;
 
         private void Awake()
         {
@@ -42,7 +43,7 @@ namespace KarioMart.Core
             }
             else
             {
-                Destroy(this);
+                Destroy(gameObject);
             }
 
             LoadResources();
@@ -63,6 +64,10 @@ namespace KarioMart.Core
                 Instance = null;
             }
             inputHandler.OnPause -= InputHandler_OnPause;
+            inputHandler.OnPause -= pauseMenu.InputHandler_OnPause;
+            Destroy(canvasInstance);
+            Destroy(gameRootInstance);
+            pauseMenu.Destroy();
         }
 
         private void LoadResources()
@@ -70,15 +75,21 @@ namespace KarioMart.Core
             canvasResource = Resources.Load<GameObject>("UI/Canvas");
             if (!canvasResource)
                 Debug.LogError("CanvasResource not found");
+            
+            gameRootResource = Resources.Load<GameObject>("Core/GameRoot");
+            
             playerOneCarResource = Resources.Load<GameObject>("Vehicle/PurpleTruck");
             if (!playerOneCarResource)
                 Debug.LogError("PlayerOneCarResource not found");
+            
             inGameHUDResource = Resources.Load<GameObject>("UI/InGame/InGameHUD");
             if (!inGameHUDResource)
                 Debug.LogError("InGameHUDResource not found");
+            
             lapIncrementerResource = Resources.Load<GameObject>("MapObjects/LapIncrease");
             if (!lapIncrementerResource)
                 Debug.LogError("LapIncrementerResource not found");
+            
             followCameraResource = Resources.Load<GameObject>("Core/FollowCamera");
             if (!followCameraResource)
                 Debug.LogError("FollowCameraResource not found");
@@ -91,31 +102,43 @@ namespace KarioMart.Core
                 Debug.LogError("InputHandler not found");
             inputHandler.Initialize();
             inputHandler.OnPause += InputHandler_OnPause;
+            
             timer = new Timer();
             if (timer == null)
                 Debug.LogError("Timer not found");
+            
             pauseMenu = new PauseMenu();
             if (pauseMenu == null)
                 Debug.LogError("PauseMenu not found");
-            pauseMenu.SetInputHandler(inputHandler);
+            inputHandler.OnPause += pauseMenu.InputHandler_OnPause;
             pauseMenu.Initialize();
             pauseMenu.GetRestartButton().onClick.AddListener(RestartGame);
+            pauseMenu.GetMainMenuButton().onClick.AddListener(GameStateManager.Instance.ReturnToMainMenu);
+            
             canvasInstance = Instantiate(canvasResource);
             if (!canvasInstance)
                 Debug.LogError("CanvasInstance not found");
-            playerOneCarGameObjectInstance = Instantiate(playerOneCarResource);
+            
+            gameRootInstance = Instantiate(gameRootResource);
+            if (!gameRootInstance)
+                Debug.LogError("GameRootInstance not found");
+            
+            playerOneCarGameObjectInstance = Instantiate(playerOneCarResource, gameRootInstance.transform);
             if (!playerOneCarGameObjectInstance)
                 Debug.LogError("PlayerOneCarInstance not found");
+            
             inGameHUDGameObjectInstance = Instantiate(inGameHUDResource, canvasInstance.transform);
             if (!inGameHUDGameObjectInstance)
                 Debug.LogError("InGameHUDInstance not found");
             inGameHUD = inGameHUDGameObjectInstance.GetComponent<InGameHUD>();
             inGameHUD.SetTimerInstance(timer);
-            lapIncrementerGameObjectInstance = Instantiate(lapIncrementerResource);
+            
+            lapIncrementerGameObjectInstance = Instantiate(lapIncrementerResource, gameRootInstance.transform);
             if (!lapIncrementerGameObjectInstance)
                 Debug.LogError("LapIncrementerInstance not found");
             lapIncrementerGameObjectInstance.GetComponent<IncrementLapCount>().SetInGameHUD(inGameHUD);
-            followCameraInstance = Instantiate(followCameraResource);
+            
+            followCameraInstance = Instantiate(followCameraResource, gameRootInstance.transform);
             if (!followCameraInstance)
                 Debug.LogError("FollowCameraInstance not found");
             followCameraInstance.GetComponent<FollowCamera>().SetFollowTarget(playerOneCarGameObjectInstance.transform);
@@ -126,7 +149,7 @@ namespace KarioMart.Core
             gameIsPaused = !gameIsPaused;
         }
 
-        public void RestartGame()
+        private void RestartGame()
         {
             Destroy(playerOneCarGameObjectInstance);
             playerOneCarGameObjectInstance = Instantiate(playerOneCarResource);
@@ -142,7 +165,7 @@ namespace KarioMart.Core
             mapGameObjectResource = Resources.Load<GameObject>($"Maps/{targetMapName}");
             if (!mapGameObjectResource)
                 Debug.LogError("MapGameObjectResource not found");
-            mapGameObjectInstance = Instantiate(mapGameObjectResource);
+            mapGameObjectInstance = Instantiate(mapGameObjectResource, gameRootInstance.transform);
             if (!mapGameObjectInstance)
                 Debug.LogError("MapGameObjectInstance not found");
         }

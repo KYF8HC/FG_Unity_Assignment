@@ -148,7 +148,6 @@ GameObject:
   - component: {fileID: 7976229313231702745}
   - component: {fileID: 2685951198514655979}
   - component: {fileID: 4271585584421195974}
-  - component: {fileID: 2132945620779978895}
   m_Layer: 5
   m_Name: RestartButton
   m_TagString: Untagged
@@ -258,7 +257,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2132945620779978895}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MapSelectorButton, Assembly-CSharp
         m_MethodName: SetTargetMapName
         m_Mode: 1
@@ -270,15 +269,3 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2132945620779978895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7949345603667951452}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c4731bdd5da43a41a66488a4492de56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
