@@ -1,4 +1,5 @@
 using KarioMart.UI;
+using KarioMart.Vehicle;
 using UnityEngine;
 
 namespace KarioMart.Core
@@ -13,7 +14,6 @@ namespace KarioMart.Core
         private GameObject gameRootResource;
         private GameObject playerOneCarResource;
         private GameObject inGameHUDResource;
-        private GameObject lapIncrementerResource;
         private GameObject mapGameObjectResource;
         private GameObject followCameraResource;
 
@@ -22,9 +22,9 @@ namespace KarioMart.Core
         private GameObject gameRootInstance;
         private GameObject playerOneCarGameObjectInstance;
         private GameObject inGameHUDGameObjectInstance;
-        private GameObject lapIncrementerGameObjectInstance;
         private GameObject mapGameObjectInstance;
         private GameObject followCameraInstance;
+        private CheckPointTracker checkPointTrackerGameObjectInstance;
         private Timer timer;
         private InputHandler inputHandler;
         private InGameHUD inGameHUD;
@@ -86,10 +86,6 @@ namespace KarioMart.Core
             if (!inGameHUDResource)
                 Debug.LogError("InGameHUDResource not found");
             
-            lapIncrementerResource = Resources.Load<GameObject>("MapObjects/LapIncrease");
-            if (!lapIncrementerResource)
-                Debug.LogError("LapIncrementerResource not found");
-            
             followCameraResource = Resources.Load<GameObject>("Core/FollowCamera");
             if (!followCameraResource)
                 Debug.LogError("FollowCameraResource not found");
@@ -133,11 +129,6 @@ namespace KarioMart.Core
             inGameHUD = inGameHUDGameObjectInstance.GetComponent<InGameHUD>();
             inGameHUD.SetTimerInstance(timer);
             
-            lapIncrementerGameObjectInstance = Instantiate(lapIncrementerResource, gameRootInstance.transform);
-            if (!lapIncrementerGameObjectInstance)
-                Debug.LogError("LapIncrementerInstance not found");
-            lapIncrementerGameObjectInstance.GetComponent<IncrementLapCount>().SetInGameHUD(inGameHUD);
-            
             followCameraInstance = Instantiate(followCameraResource, gameRootInstance.transform);
             if (!followCameraInstance)
                 Debug.LogError("FollowCameraInstance not found");
@@ -168,6 +159,9 @@ namespace KarioMart.Core
             mapGameObjectInstance = Instantiate(mapGameObjectResource, gameRootInstance.transform);
             if (!mapGameObjectInstance)
                 Debug.LogError("MapGameObjectInstance not found");
+            checkPointTrackerGameObjectInstance = FindObjectOfType<CheckPointTracker>();
+            checkPointTrackerGameObjectInstance.SetInGameHUD(inGameHUD);
+            playerOneCarGameObjectInstance.GetComponent<CarController>().SetCheckPointTracker(checkPointTrackerGameObjectInstance);
         }
 
         public InputHandler GetInputHandler()

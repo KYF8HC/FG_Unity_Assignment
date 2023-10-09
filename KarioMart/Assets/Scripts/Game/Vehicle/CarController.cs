@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using KarioMart.Core;
 using UnityEngine;
 
 namespace KarioMart.Vehicle
 {
-    public class SteerController : MonoBehaviour
+    public class CarController : MonoBehaviour
     {
         [SerializeField] private float wheelBase;
         [SerializeField] private float rearTrack;
@@ -12,19 +13,23 @@ namespace KarioMart.Vehicle
         private Rigidbody carRigidbody;
         private float ackermannAngleLeft;
         private float ackermannAngleRight;
+        private List<Wheel> wheels;
         private Wheel frontLeftWheel;
         private Wheel frontRightWheel;
         private InputHandler inputHandler;
         private PlayerInputActions playerInputActions;
-
+        private CheckPointTracker checkPointTracker;
+        private Transform lastCheckPointTransform;
         private void Start()
         {
+            wheels = new List<Wheel>();
             carRigidbody = GetComponent<Rigidbody>();
             foreach (Transform child in transform)
             {
                 var wheel = child.GetComponent<Wheel>();
                 if (!wheel)
                     continue;
+                wheels.Add(wheel);
                 switch (wheel.GetWheelPosition())
                 {
                     case Wheel.WheelPosition.FrontRight:
@@ -44,6 +49,7 @@ namespace KarioMart.Vehicle
         private void OnDestroy()
         {
             inputHandler.OnPause -= InputHandler_OnPause;
+            checkPointTracker.OnCarPassThroughCheckPoint -= CheckPointTracker_OnCarPassThroughCheckPoint;
         }
 
         private void InputHandler_OnPause()
@@ -57,7 +63,8 @@ namespace KarioMart.Vehicle
             var resetFlipInput = playerInputActions.Player.ResetFlip.ReadValue<float>();
             if (resetFlipInput > 0)
             {
-                transform.localRotation = Quaternion.identity;
+                transform.position = lastCheckPointTransform.position;
+                transform.localRotation = lastCheckPointTransform.localRotation;
             }
 
             if (steerInput < 0)
@@ -82,6 +89,25 @@ namespace KarioMart.Vehicle
 
             frontLeftWheel.SetSteerAngle(ackermannAngleLeft);
             frontRightWheel.SetSteerAngle(ackermannAngleRight);
+        }
+        
+        public void ActivateSpeedBoost()
+        {
+            foreach (var wheel in wheels)
+            {
+                wheel.ActivateSpeedBoost();
+            }
+        }
+
+        public void SetCheckPointTracker(CheckPointTracker checkPointTracker)
+        {
+            this.checkPointTracker = checkPointTracker;
+            this.checkPointTracker.OnCarPassThroughCheckPoint += CheckPointTracker_OnCarPassThroughCheckPoint;
+        }
+
+        private void CheckPointTracker_OnCarPassThroughCheckPoint(CheckPoint checkpoint)
+        {
+            lastCheckPointTransform = checkpoint.transform;
         }
     }
 }

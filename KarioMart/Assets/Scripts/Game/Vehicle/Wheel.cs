@@ -36,6 +36,9 @@ namespace KarioMart.Vehicle
         private Vector3 wheelVelocity;
         private InputHandler inputHandler;
         private PlayerInputActions playerInputActions;
+        private float speedBoostTimer = 0f;
+        private bool speedBoostActive = false;
+        private int speedBoostDuration = 3; //seconds
 
         public bool gameIsPaused = false;
 
@@ -50,7 +53,6 @@ namespace KarioMart.Vehicle
         }
 
 
-
         private void OnDestroy()
         {
             inputHandler.OnPause -= InputHandler_OnPause;
@@ -63,6 +65,20 @@ namespace KarioMart.Vehicle
             if (gameIsPaused)
                 return;
             UpdateWheelRotation();
+            if (speedBoostActive)
+            {
+                speedBoostTimer += Time.deltaTime;
+                speedMultiplier = 6f;
+                Debug.Log("ACTIVATE FULL POWER!!");
+            }
+
+            if (speedBoostTimer % 60 >= speedBoostDuration)
+            {
+                Debug.Log("Power OFF!");
+                speedBoostActive = false;
+                speedBoostTimer = 0f;
+                speedMultiplier = 1f;
+            }
         }
 
         private void FixedUpdate()
@@ -148,6 +164,11 @@ namespace KarioMart.Vehicle
             var velocity = Vector3.Dot(springDir, tireWorldVel);
             var force = (offset * springStrength) - (velocity * springDamper);
             return (springDir * force);
+        }
+
+        public void ActivateSpeedBoost()
+        {
+            speedBoostActive = true;
         }
 
         public void SetSteerAngle(float angle)
