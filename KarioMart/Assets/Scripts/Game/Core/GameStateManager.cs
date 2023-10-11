@@ -5,13 +5,6 @@ namespace KarioMart.Core
 {
     public class GameStateManager : MonoBehaviour
     {
-        public enum GameState
-        {
-            MainMenu,
-            InGame,
-            GameOver
-        }
-
         //Singleton
         public static GameStateManager Instance { get; private set; }
 
@@ -24,8 +17,6 @@ namespace KarioMart.Core
         private GameObject mainMenuInitializerInstance;
         private GameObject inGameInitializerInstance;
         private GameObject gameOverInitializerInstance;
-
-        private GameState currentGameState;
 
         private string targetMapName;
 
@@ -97,10 +88,12 @@ namespace KarioMart.Core
             mainMenuInitializerInstance.GetComponent<MainMenuInitializer>().SetMainMenuActive(true);
             Destroy(InGameInitializer.Instance.gameObject);
         }
-        
-        public void SetGameState(GameState state)
+
+        public void GameOver()
         {
-            currentGameState = state;
+            //Open End Game Menu
+            //Save Player Data (player name and time taken to finish map, map name etc.)
+            ReturnToMainMenu();
         }
     }
 }

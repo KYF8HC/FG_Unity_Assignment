@@ -20,7 +20,6 @@ namespace KarioMart.UI
         private TextMeshProUGUI timerText;
         private Timer timerInstance;
         private float time;
-        private int lapCount;
 
         private void Awake()
         {
@@ -66,14 +65,8 @@ namespace KarioMart.UI
             if (timerInstance == null)
                 Debug.LogError("TimerInstance not found");
         }
-
-        public void ResetLapCount()
+        public void UpdateLapCount(int lapCount ,int maxLapCount)
         {
-            lapCount = 0;
-        }
-        public void IncrementLapCount(int maxLapCount)
-        {
-            lapCount++;
             lapCountText.text = $"{lapCount} / {maxLapCount} Laps";
         }
     }

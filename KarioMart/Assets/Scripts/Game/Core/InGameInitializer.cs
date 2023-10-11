@@ -63,11 +63,12 @@ namespace KarioMart.Core
             {
                 Instance = null;
             }
+
             inputHandler.OnPause -= InputHandler_OnPause;
             inputHandler.OnPause -= pauseMenu.InputHandler_OnPause;
             Destroy(canvasInstance);
             Destroy(gameRootInstance);
-            pauseMenu.Destroy();
+            pauseMenu.DestroyPauseMenu();
         }
 
         private void LoadResources()
@@ -75,17 +76,17 @@ namespace KarioMart.Core
             canvasResource = Resources.Load<GameObject>("UI/Canvas");
             if (!canvasResource)
                 Debug.LogError("CanvasResource not found");
-            
+
             gameRootResource = Resources.Load<GameObject>("Core/GameRoot");
-            
+
             playerOneCarResource = Resources.Load<GameObject>("Vehicle/PurpleTruck");
             if (!playerOneCarResource)
                 Debug.LogError("PlayerOneCarResource not found");
-            
+
             inGameHUDResource = Resources.Load<GameObject>("UI/InGame/InGameHUD");
             if (!inGameHUDResource)
                 Debug.LogError("InGameHUDResource not found");
-            
+
             followCameraResource = Resources.Load<GameObject>("Core/FollowCamera");
             if (!followCameraResource)
                 Debug.LogError("FollowCameraResource not found");
@@ -98,11 +99,11 @@ namespace KarioMart.Core
                 Debug.LogError("InputHandler not found");
             inputHandler.Initialize();
             inputHandler.OnPause += InputHandler_OnPause;
-            
+
             timer = new Timer();
             if (timer == null)
                 Debug.LogError("Timer not found");
-            
+
             pauseMenu = new PauseMenu();
             if (pauseMenu == null)
                 Debug.LogError("PauseMenu not found");
@@ -110,25 +111,25 @@ namespace KarioMart.Core
             pauseMenu.Initialize();
             pauseMenu.GetRestartButton().onClick.AddListener(RestartGame);
             pauseMenu.GetMainMenuButton().onClick.AddListener(GameStateManager.Instance.ReturnToMainMenu);
-            
+
             canvasInstance = Instantiate(canvasResource);
             if (!canvasInstance)
                 Debug.LogError("CanvasInstance not found");
-            
+
             gameRootInstance = Instantiate(gameRootResource);
             if (!gameRootInstance)
                 Debug.LogError("GameRootInstance not found");
-            
+
             playerOneCarGameObjectInstance = Instantiate(playerOneCarResource, gameRootInstance.transform);
             if (!playerOneCarGameObjectInstance)
                 Debug.LogError("PlayerOneCarInstance not found");
-            
+
             inGameHUDGameObjectInstance = Instantiate(inGameHUDResource, canvasInstance.transform);
             if (!inGameHUDGameObjectInstance)
                 Debug.LogError("InGameHUDInstance not found");
             inGameHUD = inGameHUDGameObjectInstance.GetComponent<InGameHUD>();
             inGameHUD.SetTimerInstance(timer);
-            
+
             followCameraInstance = Instantiate(followCameraResource, gameRootInstance.transform);
             if (!followCameraInstance)
                 Debug.LogError("FollowCameraInstance not found");
@@ -146,22 +147,27 @@ namespace KarioMart.Core
             playerOneCarGameObjectInstance = Instantiate(playerOneCarResource);
             followCameraInstance.GetComponent<FollowCamera>().SetFollowTarget(playerOneCarGameObjectInstance.transform);
             timer.ResetTimer();
-            inGameHUD.ResetLapCount();
+            checkPointTrackerGameObjectInstance.ResetLapCount();
             gameIsPaused = !gameIsPaused;
         }
 
         public void LoadTargetMapName(string mapName)
         {
             targetMapName = mapName;
+
             mapGameObjectResource = Resources.Load<GameObject>($"Maps/{targetMapName}");
             if (!mapGameObjectResource)
                 Debug.LogError("MapGameObjectResource not found");
+
             mapGameObjectInstance = Instantiate(mapGameObjectResource, gameRootInstance.transform);
             if (!mapGameObjectInstance)
                 Debug.LogError("MapGameObjectInstance not found");
+
             checkPointTrackerGameObjectInstance = FindObjectOfType<CheckPointTracker>();
             checkPointTrackerGameObjectInstance.SetInGameHUD(inGameHUD);
-            playerOneCarGameObjectInstance.GetComponent<CarController>().SetCheckPointTracker(checkPointTrackerGameObjectInstance);
+
+            playerOneCarGameObjectInstance.GetComponent<CarController>()
+                .SetCheckPointTracker(checkPointTrackerGameObjectInstance);
         }
 
         public InputHandler GetInputHandler()

@@ -51,38 +51,39 @@ namespace KarioMart.UI
 
         private void InstantiateResources()
         {
-            pauseMenuCanvasInstance = GameObject.Instantiate(canvasResource).GetComponent<Canvas>();
+            pauseMenuCanvasInstance = Instantiate(canvasResource).GetComponent<Canvas>();
             if (!pauseMenuCanvasInstance)
                 Debug.LogError("PauseMenu: Failed to instantiate canvas instance.");
             pauseMenuCanvasInstance.name = "Pause Menu Canvas";
             pauseMenuCanvasInstance.enabled = false;
 
-            backgroundInstance = GameObject.Instantiate(backgroundResource, pauseMenuCanvasInstance.transform);
+            backgroundInstance = Instantiate(backgroundResource, pauseMenuCanvasInstance.transform);
             if (!backgroundInstance)
                 Debug.LogError("PauseMenu: Failed to instantiate background instance.");
 
-            mainMenuButtonInstance = GameObject.Instantiate(mainMenuButtonResource, pauseMenuCanvasInstance.transform)
+            mainMenuButtonInstance = Instantiate(mainMenuButtonResource, pauseMenuCanvasInstance.transform)
                 .GetComponent<Button>();
             if (!mainMenuButtonInstance)
                 Debug.LogError("PauseMenu: Failed to instantiate main menu button instance.");
 
-            restartButtonInstance = GameObject.Instantiate(restartButtonResource, pauseMenuCanvasInstance.transform)
+            restartButtonInstance = Instantiate(restartButtonResource, pauseMenuCanvasInstance.transform)
                 .GetComponent<Button>();
             if (!restartButtonInstance)
                 Debug.LogError("PauseMenu: Failed to instantiate restart button instance.");
             restartButtonInstance.onClick.AddListener(InputHandler_OnPause);
 
-            optionsButtonInstance = GameObject.Instantiate(optionsButtonResource, pauseMenuCanvasInstance.transform)
+            optionsButtonInstance = Instantiate(optionsButtonResource, pauseMenuCanvasInstance.transform)
                 .GetComponent<Button>();
             if (!optionsButtonInstance)
                 Debug.LogError("PauseMenu: Failed to instantiate options button instance.");
 
-            exitButtonInstance = GameObject.Instantiate(exitButtonResource, pauseMenuCanvasInstance.transform)
+            exitButtonInstance = Instantiate(exitButtonResource, pauseMenuCanvasInstance.transform)
                 .GetComponent<Button>();
             if (!exitButtonInstance)
                 Debug.LogError("PauseMenu: Failed to instantiate exit button instance.");
             exitButtonInstance.onClick.AddListener(Application.Quit);
         }
+        
 
         public void InputHandler_OnPause()
         {
@@ -95,20 +96,20 @@ namespace KarioMart.UI
             InstantiateResources();
         }
 
-        public void Destroy()
+        public void DestroyPauseMenu()
         {
             if (pauseMenuCanvasInstance)
-                GameObject.Destroy(pauseMenuCanvasInstance.gameObject);
+                Destroy(pauseMenuCanvasInstance.gameObject);
             if (backgroundInstance)
-                GameObject.Destroy(backgroundInstance);
+                Destroy(backgroundInstance);
             if (mainMenuButtonInstance)
-                GameObject.Destroy(mainMenuButtonInstance);
+                Destroy(mainMenuButtonInstance);
             if (restartButtonInstance)
-                GameObject.Destroy(restartButtonInstance);
+                Destroy(restartButtonInstance);
             if (optionsButtonInstance)
-                GameObject.Destroy(optionsButtonInstance);
+                Destroy(optionsButtonInstance);
             if (exitButtonInstance)
-                GameObject.Destroy(exitButtonInstance);
+                Destroy(exitButtonInstance);
         }
 
         public Button GetRestartButton()
@@ -119,6 +120,21 @@ namespace KarioMart.UI
         public Button GetMainMenuButton()
         {
             return mainMenuButtonInstance;
+        }
+
+        private static GameObject Instantiate(GameObject prefab)
+        {
+            return GameObject.Instantiate(prefab);
+        }
+
+        private static GameObject Instantiate(GameObject prefab, Transform parent)
+        {
+            return GameObject.Instantiate(prefab, parent);
+        }
+
+        private static void Destroy(Object gameObject)
+        {
+            GameObject.Destroy(gameObject);
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using KarioMart.UI;
 using UnityEngine;
@@ -12,8 +11,10 @@ namespace KarioMart.Core
         public event CheckPointEventHandler OnCarPassThroughCheckPoint;
         private InGameHUD inGameHUD;
         private List<CheckPoint> checkPoints;
+        private int lapCount = 0;
         private int maxLapCount = 4;
-        private int nextCheckPointIndex;
+        [SerializeField] private List<Transform> carTransformsList;
+        private List<int> nextCheckPointIndexList;
 
         private void Awake()
         {
@@ -24,24 +25,53 @@ namespace KarioMart.Core
                 checkPointInstance.SetCheckPointTracker(this);
                 checkPoints.Add(checkPointInstance);
             }
+
+            nextCheckPointIndexList = new List<int>();
+            foreach (var carTransform in carTransformsList)
+            {
+                nextCheckPointIndexList.Add(0);
+            }
         }
 
-        public void CarThroughCheckPoint(CheckPoint checkPoint)
+        public void CarThroughCheckPoint(CheckPoint checkPoint, Transform carTransform)
         {
+            int nextCheckPointIndex = nextCheckPointIndexList[carTransformsList.IndexOf(carTransform)];
+            Debug.Log(nextCheckPointIndex);
             var index = checkPoints.IndexOf(checkPoint);
             if (index != nextCheckPointIndex)
+            {
+                Debug.Log("asd");
                 return;
+            }
+
             if (index == checkPoints.Count - 1)
             {
-                nextCheckPointIndex = 0;
+                nextCheckPointIndexList[carTransformsList.IndexOf(carTransform)] = 0;
                 return;
             }
 
             if (index == 0)
-                inGameHUD.IncrementLapCount(maxLapCount);
+            {
+                lapCount++;
+                //inGameHUD.UpdateLapCount(lapCount, maxLapCount);
+            }
 
+            if (lapCount == maxLapCount + 1)
+                GameStateManager.Instance.GameOver();
+            Debug.Log("Car passed through check point " + checkPoint.name);
             OnCarPassThroughCheckPoint?.Invoke(checkPoint);
-            nextCheckPointIndex++;
+            nextCheckPointIndexList[carTransformsList.IndexOf(carTransform)]++;
+        }
+
+        public Transform GetCheckPointTransform(Transform carTransform)
+        {
+            var nextCheckPointIndex = nextCheckPointIndexList[carTransformsList.IndexOf(carTransform)];
+            return checkPoints[nextCheckPointIndex].transform;
+        }
+
+        public void ResetLapCount()
+        {
+            lapCount = 0;
         }
 
         public void SetInGameHUD(InGameHUD inGameHUD)
