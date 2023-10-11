@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +7,6 @@ namespace KarioMart.Core
     {
         private NavMeshAgent carAgent;
         [SerializeField] private CheckPointTracker checkPointTracker;
-        private float wayPointTolerance = 10f;
 
         private void Awake()
         {

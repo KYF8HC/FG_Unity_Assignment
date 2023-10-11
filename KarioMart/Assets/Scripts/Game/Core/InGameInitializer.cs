@@ -16,6 +16,7 @@ namespace KarioMart.Core
         private GameObject inGameHUDResource;
         private GameObject mapGameObjectResource;
         private GameObject followCameraResource;
+        private GameObject aiCarGameObjectResource;
 
         //Instances
         private GameObject canvasInstance;
@@ -24,6 +25,7 @@ namespace KarioMart.Core
         private GameObject inGameHUDGameObjectInstance;
         private GameObject mapGameObjectInstance;
         private GameObject followCameraInstance;
+        private GameObject aiCarGameObjectInstance;
         private CheckPointTracker checkPointTrackerGameObjectInstance;
         private Timer timer;
         private InputHandler inputHandler;
@@ -90,6 +92,11 @@ namespace KarioMart.Core
             followCameraResource = Resources.Load<GameObject>("Core/FollowCamera");
             if (!followCameraResource)
                 Debug.LogError("FollowCameraResource not found");
+
+            aiCarGameObjectResource = Resources.Load<GameObject>("Vehicle/AICar");
+            if (!aiCarGameObjectResource)
+                Debug.LogError("AICarResource not found");
+
         }
 
         private void InstantiateResources()
@@ -134,6 +141,8 @@ namespace KarioMart.Core
             if (!followCameraInstance)
                 Debug.LogError("FollowCameraInstance not found");
             followCameraInstance.GetComponent<FollowCamera>().SetFollowTarget(playerOneCarGameObjectInstance.transform);
+            
+            
         }
 
         private void InputHandler_OnPause()
@@ -162,10 +171,18 @@ namespace KarioMart.Core
             mapGameObjectInstance = Instantiate(mapGameObjectResource, gameRootInstance.transform);
             if (!mapGameObjectInstance)
                 Debug.LogError("MapGameObjectInstance not found");
+            
+            aiCarGameObjectInstance = Instantiate(aiCarGameObjectResource, gameRootInstance.transform);
+            if (!aiCarGameObjectInstance)
+                Debug.LogError("AICarInstance not found");
 
             checkPointTrackerGameObjectInstance = FindObjectOfType<CheckPointTracker>();
+            aiCarGameObjectInstance.GetComponent<AICar>().SetCheckPointTracker(checkPointTrackerGameObjectInstance);
             checkPointTrackerGameObjectInstance.SetInGameHUD(inGameHUD);
-
+            checkPointTrackerGameObjectInstance.AddElementsToCarTrasnformList(playerOneCarGameObjectInstance.transform);
+            checkPointTrackerGameObjectInstance.AddElementsToCarTrasnformList(aiCarGameObjectInstance.transform);
+            checkPointTrackerGameObjectInstance.Initialize();
+            
             playerOneCarGameObjectInstance.GetComponent<CarController>()
                 .SetCheckPointTracker(checkPointTrackerGameObjectInstance);
         }

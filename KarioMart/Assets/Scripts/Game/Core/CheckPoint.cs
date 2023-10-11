@@ -9,7 +9,6 @@ namespace KarioMart.Core
         {
             if (other.CompareTag("Player"))
             {
-                Debug.Log(other.name);
                 checkPointTracker.CarThroughCheckPoint(this, other.transform);
             }
         }
